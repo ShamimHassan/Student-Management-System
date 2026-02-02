@@ -1,3 +1,5 @@
+# Student-Management-System
+php-mysql -javascript-jquery project
 # 🎓 Student Management System
 
 A web-based **Student Management System (SMS)** built using **HTML, CSS, Bootstrap, JavaScript, jQuery, PHP, and MySQL**.  
