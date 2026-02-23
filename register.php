@@ -28,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $message_type = "danger";
     } else {
         // Check if username already exists
-        $check = $conn->prepare("SELECT id FROM admins WHERE username = ?");
+        $check = $conn->prepare("SELECT id FROM users WHERE username = ?");
         $check->bind_param("s", $username);
         $check->execute();
         
@@ -41,15 +41,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             if ($role === 'admin') {
                 // Create admin account
-                $stmt = $conn->prepare("INSERT INTO admins (username, password, role) VALUES (?, ?, 'admin')");
-                $stmt->bind_param("ss", $username, $hashed_password);
+                $first_name = trim($_POST['admin_first_name']);
+                $last_name = trim($_POST['admin_last_name']);
+                $email = trim($_POST['admin_email']);
                 
-                if ($stmt->execute()) {
-                    $message = "Admin account created successfully! You can now login.";
-                    $message_type = "success";
-                } else {
-                    $message = "Error creating admin account!";
+                if (empty($first_name) || empty($last_name) || empty($email)) {
+                    $message = "All admin fields are required!";
                     $message_type = "danger";
+                } else {
+                    // Check if email already exists
+                    $check_email = $conn->prepare("SELECT id FROM users WHERE email = ?");
+                    $check_email->bind_param("s", $email);
+                    $check_email->execute();
+                    
+                    if ($check_email->get_result()->num_rows > 0) {
+                        $message = "Email already exists!";
+                        $message_type = "danger";
+                    } else {
+                        $stmt = $conn->prepare("INSERT INTO users (username, password, role, first_name, last_name, email) VALUES (?, ?, 'admin', ?, ?, ?)");
+                        $stmt->bind_param("sssss", $username, $hashed_password, $first_name, $last_name, $email);
+                        
+                        if ($stmt->execute()) {
+                            $message = "Admin account created successfully! You can now login.";
+                            $message_type = "success";
+                        } else {
+                            $message = "Error creating admin account!";
+                            $message_type = "danger";
+                        }
+                    }
                 }
             } elseif ($role === 'teacher') {
                 // Create teacher account
@@ -64,15 +83,25 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $message = "All teacher fields are required!";
                     $message_type = "danger";
                 } else {
-                    $stmt = $conn->prepare("INSERT INTO admins (username, password, role, subject_id, assigned_classes) VALUES (?, ?, 'teacher', ?, ?)");
-                    $stmt->bind_param("ssis", $username, $hashed_password, $subject_id, $assigned_classes);
+                    // Check if email already exists
+                    $check_email = $conn->prepare("SELECT id FROM users WHERE email = ?");
+                    $check_email->bind_param("s", $email);
+                    $check_email->execute();
                     
-                    if ($stmt->execute()) {
-                        $message = "Teacher account created successfully! You can now login.";
-                        $message_type = "success";
-                    } else {
-                        $message = "Error creating teacher account!";
+                    if ($check_email->get_result()->num_rows > 0) {
+                        $message = "Email already exists!";
                         $message_type = "danger";
+                    } else {
+                        $stmt = $conn->prepare("INSERT INTO users (username, password, role, first_name, last_name, email, phone, subject_id, assigned_classes) VALUES (?, ?, 'teacher', ?, ?, ?, ?, ?, ?)");
+                        $stmt->bind_param("ssssssis", $username, $hashed_password, $first_name, $last_name, $email, $phone, $subject_id, $assigned_classes);
+                        
+                        if ($stmt->execute()) {
+                            $message = "Teacher account created successfully! You can now login.";
+                            $message_type = "success";
+                        } else {
+                            $message = "Error creating teacher account!";
+                            $message_type = "danger";
+                        }
                     }
                 }
             } elseif ($role === 'parent') {
@@ -87,28 +116,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $message = "All parent fields are required!";
                     $message_type = "danger";
                 } else {
-                    // Verify student exists
-                    $check_student = $conn->prepare("SELECT id FROM students WHERE student_id = ?");
-                    $check_student->bind_param("s", $student_reference);
-                    $check_student->execute();
-                    $student_result = $check_student->get_result();
+                    // Check if email already exists
+                    $check_email = $conn->prepare("SELECT id FROM users WHERE email = ?");
+                    $check_email->bind_param("s", $email);
+                    $check_email->execute();
                     
-                    if ($student_result->num_rows == 0) {
-                        $message = "Student with ID '$student_reference' not found!";
+                    if ($check_email->get_result()->num_rows > 0) {
+                        $message = "Email already exists!";
                         $message_type = "danger";
                     } else {
-                        $student_data = $student_result->fetch_assoc();
-                        $student_db_id = $student_data['id'];
+                        // Verify student exists
+                        $check_student = $conn->prepare("SELECT id FROM students WHERE student_id = ?");
+                        $check_student->bind_param("s", $student_reference);
+                        $check_student->execute();
+                        $student_result = $check_student->get_result();
                         
-                        $stmt = $conn->prepare("INSERT INTO admins (username, password, role, student_id) VALUES (?, ?, 'parent', ?)");
-                        $stmt->bind_param("ssi", $username, $hashed_password, $student_db_id);
-                        
-                        if ($stmt->execute()) {
-                            $message = "Parent account created successfully! You can now login.";
-                            $message_type = "success";
-                        } else {
-                            $message = "Error creating parent account!";
+                        if ($student_result->num_rows == 0) {
+                            $message = "Student with ID '$student_reference' not found!";
                             $message_type = "danger";
+                        } else {
+                            $student_data = $student_result->fetch_assoc();
+                            $student_db_id = $student_data['id'];
+                            
+                            $stmt = $conn->prepare("INSERT INTO users (username, password, role, first_name, last_name, email, phone, student_id) VALUES (?, ?, 'parent', ?, ?, ?, ?, ?)");
+                            $stmt->bind_param("ssssssi", $username, $hashed_password, $first_name, $last_name, $email, $phone, $student_db_id);
+                            
+                            if ($stmt->execute()) {
+                                $message = "Parent account created successfully! You can now login.";
+                                $message_type = "success";
+                            } else {
+                                $message = "Error creating parent account!";
+                                $message_type = "danger";
+                            }
                         }
                     }
                 }
@@ -124,39 +163,49 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $message = "All student fields are required!";
                     $message_type = "danger";
                 } else {
-                    // Check if student ID or email already exists
-                    $check_student = $conn->prepare("SELECT id FROM students WHERE student_id = ? OR email = ?");
-                    $check_student->bind_param("ss", $student_id, $email);
-                    $check_student->execute();
+                    // Check if email already exists
+                    $check_email = $conn->prepare("SELECT id FROM users WHERE email = ?");
+                    $check_email->bind_param("s", $email);
+                    $check_email->execute();
                     
-                    if ($check_student->get_result()->num_rows > 0) {
-                        $message = "Student ID or Email already exists!";
+                    if ($check_email->get_result()->num_rows > 0) {
+                        $message = "Email already exists!";
                         $message_type = "danger";
                     } else {
-                        // Start transaction
-                        $conn->begin_transaction();
+                        // Check if student ID or email already exists
+                        $check_student = $conn->prepare("SELECT id FROM students WHERE student_id = ? OR email = ?");
+                        $check_student->bind_param("ss", $student_id, $email);
+                        $check_student->execute();
                         
-                        try {
-                            // Create student record
-                            $stmt_student = $conn->prepare("INSERT INTO students (student_id, first_name, last_name, email, phone, status) VALUES (?, ?, ?, ?, ?, 'active')");
-                            $stmt_student->bind_param("sssss", $student_id, $first_name, $last_name, $email, $phone);
-                            $stmt_student->execute();
+                        if ($check_student->get_result()->num_rows > 0) {
+                            $message = "Student ID or email already exists!";
+                            $message_type = "danger";
+                        } else {
+                        // Create student record
+                        $student_stmt = $conn->prepare("INSERT INTO students (student_id, first_name, last_name, email, phone) VALUES (?, ?, ?, ?, ?)");
+                        $student_stmt->bind_param("sssss", $student_id, $first_name, $last_name, $email, $phone);
+                        
+                        if ($student_stmt->execute()) {
                             $student_db_id = $conn->insert_id;
                             
-                            // Create student login account
-                            $stmt_admin = $conn->prepare("INSERT INTO admins (username, password, role, student_id) VALUES (?, ?, 'student', ?)");
-                            $stmt_admin->bind_param("ssi", $username, $hashed_password, $student_db_id);
-                            $stmt_admin->execute();
+                            // Create user account
+                            $stmt = $conn->prepare("INSERT INTO users (username, password, role, first_name, last_name, email, phone, student_id) VALUES (?, ?, 'student', ?, ?, ?, ?, ?)");
+                            $stmt->bind_param("ssssssi", $username, $hashed_password, $first_name, $last_name, $email, $phone, $student_db_id);
                             
-                            // Commit transaction
-                            $conn->commit();
-                            
-                            $message = "Student account created successfully! You can now login.";
-                            $message_type = "success";
-                        } catch (Exception $e) {
-                            // Rollback transaction
-                            $conn->rollback();
-                            $message = "Error creating student account!";
+                            if ($stmt->execute()) {
+                                $message = "Student account created successfully! You can now login.";
+                                $message_type = "success";
+                            } else {
+                                // Rollback student creation
+                                $rollback = $conn->prepare("DELETE FROM students WHERE id = ?");
+                                $rollback->bind_param("i", $student_db_id);
+                                $rollback->execute();
+                                
+                                $message = "Error creating student account!";
+                                $message_type = "danger";
+                            }
+                        } else {
+                            $message = "Error creating student record!";
                             $message_type = "danger";
                         }
                     }
@@ -164,6 +213,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             }
         }
     }
+}
 }
 ?>
 
@@ -314,6 +364,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                         <input type="password" name="confirm_password" id="confirm_password" class="form-control" required>
                                     </div>
                                     <div id="password_match" class="form-text"></div>
+                                </div>
+                            </div>
+                            
+                            <!-- Admin-Specific Fields -->
+                            <div class="admin-fields" id="adminFields">
+                                <hr class="my-4">
+                                <h5 class="mb-3"><i class="fas fa-user-shield me-2"></i>Admin Information</h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" name="admin_first_name" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" name="admin_last_name" class="form-control">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" name="admin_email" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <input type="text" name="admin_phone" class="form-control">
+                                    </div>
                                 </div>
                             </div>
                             
@@ -469,11 +547,18 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             event.currentTarget.classList.add('active');
             
             // Show/hide fields based on role
+            document.getElementById('adminFields').style.display = 'none';
             document.getElementById('studentFields').style.display = 'none';
             document.getElementById('teacherFields').style.display = 'none';
             document.getElementById('parentFields').style.display = 'none';
             
-            if (role === 'student') {
+            if (role === 'admin') {
+                document.getElementById('adminFields').style.display = 'block';
+                // Make admin fields required
+                document.getElementById('adminFields').querySelectorAll('input[required]').forEach(input => {
+                    input.required = true;
+                });
+            } else if (role === 'student') {
                 document.getElementById('studentFields').style.display = 'block';
                 // Make student fields required
                 document.getElementById('studentFields').querySelectorAll('input').forEach(input => {

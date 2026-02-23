@@ -25,7 +25,16 @@ admin:
 * admin can check and input all students attendance and result
 * Cloud based solution to manage your institute to anytime and anywher.
 
+student:
 
+* anyone can create student account as a role of student
+* Act Smartly and keep class and institute activities at your fingure tips.
+* Never miss your subject wise homework even when you are away.
+* Daily attendance and homework alerts on his or her phone
+* pay Fee Bill and take Fee Receipt for own and all subjects use by student id and phone number
+* see progress  and exam result on a single click.
+* Smart student management of students,staff,parents with userfriendly mode.
+* Fast downloadable report of fee,staff Attendance,transportations and more.
 
 teacher:
 
@@ -67,13 +76,4 @@ parent:
 
 
 
-student:
 
-* anyone can create student account as a role of student
-* Act Smartly and keep class and institute activities at your fingure tips.
-* Never miss your subject wise homework even when you are away.
-* Daily attendance and homework alerts on his or her phone
-* pay Fee Bill and take Fee Receipt for own and all subjects use by student id and phone number
-* see progress  and exam result on a single click.
-* Smart student management of students,staff,parents with userfriendly mode.
-* Fast downloadable report of fee,staff Attendance,transportations and more.

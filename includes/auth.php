@@ -55,10 +55,10 @@ function redirectBasedOnRole() {
 function getUserDetails($conn) {
     if (isLoggedIn()) {
         $user_id = $_SESSION['user_id'];
-        $sql = "SELECT a.*, s.student_id, s.first_name, s.last_name, s.email as student_email 
-                FROM admins a 
-                LEFT JOIN students s ON a.student_id = s.id 
-                WHERE a.id = ?";
+        $sql = "SELECT u.*, s.student_id, s.first_name as student_first_name, s.last_name as student_last_name, s.email as student_email 
+                FROM users u 
+                LEFT JOIN students s ON u.student_id = s.id 
+                WHERE u.id = ?";
         $stmt = $conn->prepare($sql);
         $stmt->bind_param("i", $user_id);
         $stmt->execute();
@@ -70,9 +70,9 @@ function getUserDetails($conn) {
 
 // Login function
 function login($conn, $username, $password, $role) {
-    $sql = "SELECT a.id, a.username, a.password, a.role, a.student_id 
-            FROM admins a 
-            WHERE a.username = ? AND a.role = ?";
+    $sql = "SELECT u.id, u.username, u.password, u.role, u.student_id, u.first_name, u.last_name, u.email 
+            FROM users u 
+            WHERE u.username = ? AND u.role = ? AND u.is_active = 1";
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("ss", $username, $role);
     $stmt->execute();
@@ -85,6 +85,16 @@ function login($conn, $username, $password, $role) {
             $_SESSION['user_username'] = $user['username'];
             $_SESSION['user_role'] = $user['role'];
             $_SESSION['student_id'] = $user['student_id'];
+            $_SESSION['first_name'] = $user['first_name'];
+            $_SESSION['last_name'] = $user['last_name'];
+            $_SESSION['email'] = $user['email'];
+            
+            // Update last login
+            $update_sql = "UPDATE users SET last_login = NOW() WHERE id = ?";
+            $update_stmt = $conn->prepare($update_sql);
+            $update_stmt->bind_param("i", $user['id']);
+            $update_stmt->execute();
+            
             return true;
         }
     }

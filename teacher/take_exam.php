@@ -1,13 +1,17 @@
 <?php
+$page_title = "Take Exam";
 require_once '../includes/config.php';
 require_once '../includes/auth.php';
 
 // Check if user is logged in and is teacher
-if (!isLoggedIn() || $_SESSION['role'] !== 'teacher') {
+if (!isLoggedIn() || $_SESSION['user_role'] !== 'teacher') {
     header('Location: ../login.php');
     exit();
 }
+
+requireLogin();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -57,18 +61,6 @@ if (!isLoggedIn() || $_SESSION['role'] !== 'teacher') {
             box-shadow: 0 0.15rem 1.75rem 0 rgba(58, 59, 69, 0.15);
             margin-bottom: 20px;
         }
-        .border-left-primary {
-            border-left: 0.25rem solid #4e73df !important;
-        }
-        .border-left-success {
-            border-left: 0.25rem solid #1cc88a !important;
-        }
-        .border-left-info {
-            border-left: 0.25rem solid #36b9cc !important;
-        }
-        .border-left-warning {
-            border-left: 0.25rem solid #f6c23e !important;
-        }
     </style>
 </head>
 <body>
@@ -79,18 +71,17 @@ if (!isLoggedIn() || $_SESSION['role'] !== 'teacher') {
                 <div class="position-sticky pt-3">
                     <div class="text-center mb-4">
                         <h4><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Panel</h4>
-                        <small><?php echo htmlspecialchars($_SESSION['username']); ?></small>
+                        <small><?php echo htmlspecialchars($_SESSION['user_username']); ?></small>
                     </div>
                     
                     <ul class="nav flex-column">
                         <li class="nav-item">
-                            <a class="nav-link <?php echo (!isset($_GET['page']) || $_GET['page'] == 'dashboard') ? 'active' : ''; ?>" 
-                               href="dashboard.php">
+                            <a class="nav-link" href="dashboard.php">
                                 <i class="fas fa-tachometer-alt"></i> Dashboard
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="take_exam.php">
+                            <a class="nav-link active" href="take_exam.php">
                                 <i class="fas fa-edit"></i> Take Exam
                             </a>
                         </li>
@@ -143,13 +134,13 @@ if (!isLoggedIn() || $_SESSION['role'] !== 'teacher') {
                         </button>
                         
                         <div class="d-flex align-items-center">
-                            <h5 class="mb-0"><?php echo isset($page_title) ? $page_title : 'Dashboard'; ?></h5>
+                            <h5 class="mb-0"><?php echo isset($page_title) ? $page_title : 'Page'; ?></h5>
                         </div>
                         
                         <div class="d-flex align-items-center">
                             <span class="me-3">
                                 <i class="fas fa-chalkboard-teacher me-1"></i>
-                                <?php echo htmlspecialchars($_SESSION['username']); ?>
+                                <?php echo htmlspecialchars($_SESSION['user_username']); ?>
                             </span>
                             <a href="../logout.php" class="btn btn-outline-danger btn-sm">
                                 <i class="fas fa-sign-out-alt"></i> Logout
@@ -157,3 +148,58 @@ if (!isLoggedIn() || $_SESSION['role'] !== 'teacher') {
                         </div>
                     </div>
                 </nav>
+                
+                <!-- Page Content -->
+                <div class="row">
+                    <div class="col-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0"><i class="fas fa-edit me-2"></i>Take Exam</h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="text-center py-5">
+                                    <i class="fas fa-edit fa-3x text-primary mb-3"></i>
+                                    <h4>Virtual Exam System</h4>
+                                    <p class="text-muted">Create and conduct exams with virtual question system</p>
+                                    
+                                    <div class="row mt-4">
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card h-100">
+                                                <div class="card-body text-center">
+                                                    <i class="fas fa-plus-circle fa-2x text-success mb-2"></i>
+                                                    <h5>Create New Exam</h5>
+                                                    <p class="text-muted">Design exam with virtual questions</p>
+                                                    <a href="#" class="btn btn-success">Start Creating</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <div class="card h-100">
+                                                <div class="card-body text-center">
+                                                    <i class="fas fa-list fa-2x text-info mb-2"></i>
+                                                    <h5>Manage Exams</h5>
+                                                    <p class="text-muted">View and edit existing exams</p>
+                                                    <a href="#" class="btn btn-info">View Exams</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Bootstrap 5 JS Bundle -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
+    
+    <!-- Custom JS -->
+    <script src="../assets/js/script.js"></script>
+</body>
+</html>
