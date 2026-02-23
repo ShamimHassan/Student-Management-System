@@ -51,8 +51,69 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     $message = "Error creating admin account!";
                     $message_type = "danger";
                 }
+            } elseif ($role === 'teacher') {
+                // Create teacher account
+                $first_name = trim($_POST['teacher_first_name']);
+                $last_name = trim($_POST['teacher_last_name']);
+                $email = trim($_POST['teacher_email']);
+                $phone = trim($_POST['teacher_phone']);
+                $subject_id = !empty($_POST['subject_id']) ? $_POST['subject_id'] : null;
+                $assigned_classes = trim($_POST['assigned_classes']);
+                
+                if (empty($first_name) || empty($last_name) || empty($email)) {
+                    $message = "All teacher fields are required!";
+                    $message_type = "danger";
+                } else {
+                    $stmt = $conn->prepare("INSERT INTO admins (username, password, role, subject_id, assigned_classes) VALUES (?, ?, 'teacher', ?, ?)");
+                    $stmt->bind_param("ssis", $username, $hashed_password, $subject_id, $assigned_classes);
+                    
+                    if ($stmt->execute()) {
+                        $message = "Teacher account created successfully! You can now login.";
+                        $message_type = "success";
+                    } else {
+                        $message = "Error creating teacher account!";
+                        $message_type = "danger";
+                    }
+                }
+            } elseif ($role === 'parent') {
+                // Create parent account
+                $first_name = trim($_POST['parent_first_name']);
+                $last_name = trim($_POST['parent_last_name']);
+                $email = trim($_POST['parent_email']);
+                $phone = trim($_POST['parent_phone']);
+                $student_reference = trim($_POST['student_reference']);
+                
+                if (empty($first_name) || empty($last_name) || empty($email) || empty($phone) || empty($student_reference)) {
+                    $message = "All parent fields are required!";
+                    $message_type = "danger";
+                } else {
+                    // Verify student exists
+                    $check_student = $conn->prepare("SELECT id FROM students WHERE student_id = ?");
+                    $check_student->bind_param("s", $student_reference);
+                    $check_student->execute();
+                    $student_result = $check_student->get_result();
+                    
+                    if ($student_result->num_rows == 0) {
+                        $message = "Student with ID '$student_reference' not found!";
+                        $message_type = "danger";
+                    } else {
+                        $student_data = $student_result->fetch_assoc();
+                        $student_db_id = $student_data['id'];
+                        
+                        $stmt = $conn->prepare("INSERT INTO admins (username, password, role, student_id) VALUES (?, ?, 'parent', ?)");
+                        $stmt->bind_param("ssi", $username, $hashed_password, $student_db_id);
+                        
+                        if ($stmt->execute()) {
+                            $message = "Parent account created successfully! You can now login.";
+                            $message_type = "success";
+                        } else {
+                            $message = "Error creating parent account!";
+                            $message_type = "danger";
+                        }
+                    }
+                }
             } else {
-                // For student role, we need additional student information
+                // For student role
                 $first_name = trim($_POST['first_name']);
                 $last_name = trim($_POST['last_name']);
                 $email = trim($_POST['email']);
@@ -145,9 +206,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             display: flex;
             gap: 15px;
             margin-bottom: 20px;
+            flex-wrap: wrap;
         }
         .role-option {
             flex: 1;
+            min-width: 120px;
             text-align: center;
             padding: 15px;
             border: 2px solid #dee2e6;
@@ -169,7 +232,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             margin-bottom: 10px;
             display: block;
         }
-        .student-fields {
+        .student-fields, .teacher-fields, .parent-fields {
             display: none;
         }
     </style>
@@ -177,7 +240,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
 <body>
     <div class="container">
         <div class="row justify-content-center">
-            <div class="col-md-8 col-lg-6">
+            <div class="col-md-10 col-lg-8">
                 <div class="register-card">
                     <div class="register-header">
                         <i class="fas fa-user-plus fa-3x mb-3"></i>
@@ -199,6 +262,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="role-option active" onclick="selectRole('admin')">
                                     <i class="fas fa-user-shield"></i>
                                     <div>Admin</div>
+                                </div>
+                                <div class="role-option" onclick="selectRole('teacher')">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <div>Teacher</div>
+                                </div>
+                                <div class="role-option" onclick="selectRole('parent')">
+                                    <i class="fas fa-user-friends"></i>
+                                    <div>Parent</div>
                                 </div>
                                 <div class="role-option" onclick="selectRole('student')">
                                     <i class="fas fa-user-graduate"></i>
@@ -254,35 +325,114 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">First Name *</label>
-                                        <input type="text" name="first_name" class="form-control" 
-                                               value="<?php echo isset($_POST['first_name']) ? htmlspecialchars($_POST['first_name']) : ''; ?>">
+                                        <input type="text" name="first_name" class="form-control">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Last Name *</label>
-                                        <input type="text" name="last_name" class="form-control" 
-                                               value="<?php echo isset($_POST['last_name']) ? htmlspecialchars($_POST['last_name']) : ''; ?>">
+                                        <input type="text" name="last_name" class="form-control">
                                     </div>
                                 </div>
                                 
                                 <div class="row">
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Email *</label>
-                                        <input type="email" name="email" class="form-control" 
-                                               value="<?php echo isset($_POST['email']) ? htmlspecialchars($_POST['email']) : ''; ?>">
+                                        <input type="email" name="email" class="form-control">
                                     </div>
                                     <div class="col-md-6 mb-3">
                                         <label class="form-label">Phone</label>
-                                        <input type="text" name="phone" class="form-control" 
-                                               value="<?php echo isset($_POST['phone']) ? htmlspecialchars($_POST['phone']) : ''; ?>">
+                                        <input type="text" name="phone" class="form-control">
                                     </div>
                                 </div>
                                 
                                 <div class="row">
                                     <div class="col-md-12 mb-3">
                                         <label class="form-label">Student ID *</label>
-                                        <input type="text" name="student_id" class="form-control" 
-                                               value="<?php echo isset($_POST['student_id']) ? htmlspecialchars($_POST['student_id']) : ''; ?>"
-                                               placeholder="e.g., STU001">
+                                        <input type="text" name="student_id" class="form-control" placeholder="e.g., STU001">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Teacher-Specific Fields -->
+                            <div class="teacher-fields" id="teacherFields">
+                                <hr class="my-4">
+                                <h5 class="mb-3"><i class="fas fa-chalkboard-teacher me-2"></i>Teacher Information</h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" name="teacher_first_name" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" name="teacher_last_name" class="form-control">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" name="teacher_email" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone</label>
+                                        <input type="text" name="teacher_phone" class="form-control">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Subject *</label>
+                                        <select name="subject_id" class="form-control">
+                                            <option value="">Select Subject</option>
+                                            <?php 
+                                            $subjects = $conn->query("SELECT id, course_name FROM courses ORDER BY course_name");
+                                            while($subject = $subjects->fetch_assoc()): ?>
+                                                <option value="<?php echo $subject['id']; ?>">
+                                                    <?php echo htmlspecialchars($subject['course_name']); ?>
+                                                </option>
+                                            <?php endwhile; ?>
+                                        </select>
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Assigned Classes</label>
+                                        <input type="text" name="assigned_classes" class="form-control" placeholder="e.g., Class 9A, Class 10B">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Parent-Specific Fields -->
+                            <div class="parent-fields" id="parentFields">
+                                <hr class="my-4">
+                                <h5 class="mb-3"><i class="fas fa-user-friends me-2"></i>Parent Information</h5>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">First Name *</label>
+                                        <input type="text" name="parent_first_name" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Last Name *</label>
+                                        <input type="text" name="parent_last_name" class="form-control">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Email *</label>
+                                        <input type="email" name="parent_email" class="form-control">
+                                    </div>
+                                    <div class="col-md-6 mb-3">
+                                        <label class="form-label">Phone *</label>
+                                        <input type="text" name="parent_phone" class="form-control">
+                                    </div>
+                                </div>
+                                
+                                <div class="row">
+                                    <div class="col-md-12 mb-3">
+                                        <label class="form-label">Student Reference (Student ID) *</label>
+                                        <input type="text" name="student_reference" class="form-control" 
+                                               placeholder="Enter student ID to link with child">
+                                        <small class="text-muted">This will link you to your child's account</small>
                                     </div>
                                 </div>
                             </div>
@@ -318,19 +468,28 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             event.currentTarget.classList.add('active');
             
-            // Show/hide student fields
-            const studentFields = document.getElementById('studentFields');
+            // Show/hide fields based on role
+            document.getElementById('studentFields').style.display = 'none';
+            document.getElementById('teacherFields').style.display = 'none';
+            document.getElementById('parentFields').style.display = 'none';
+            
             if (role === 'student') {
-                studentFields.style.display = 'block';
+                document.getElementById('studentFields').style.display = 'block';
                 // Make student fields required
-                studentFields.querySelectorAll('input').forEach(input => {
+                document.getElementById('studentFields').querySelectorAll('input').forEach(input => {
                     input.required = true;
                 });
-            } else {
-                studentFields.style.display = 'none';
-                // Remove required from student fields
-                studentFields.querySelectorAll('input').forEach(input => {
-                    input.required = false;
+            } else if (role === 'teacher') {
+                document.getElementById('teacherFields').style.display = 'block';
+                // Make teacher fields required
+                document.getElementById('teacherFields').querySelectorAll('input[required], select[required]').forEach(input => {
+                    input.required = true;
+                });
+            } else if (role === 'parent') {
+                document.getElementById('parentFields').style.display = 'block';
+                // Make parent fields required
+                document.getElementById('parentFields').querySelectorAll('input[required]').forEach(input => {
+                    input.required = true;
                 });
             }
         }

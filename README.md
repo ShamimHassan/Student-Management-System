@@ -1,5 +1,3 @@
-# Student-Management-System
-php-mysql -javascript-jquery project
 # 🎓 Student Management System
 
 A web-based **Student Management System (SMS)** built using **HTML, CSS, Bootstrap, JavaScript, jQuery, PHP, and MySQL**.  
@@ -25,8 +23,9 @@ This application helps educational institutions manage student records, courses,
 
 ### 📊 Result Management
 - Enter and update marks
-- Automatic grade calculation
+- Automatic grade calculation (5.0 scale)
 - Student-wise result reports
+- Grading scale: 5.00 (A+), 4.00 (A), 3.50 (A-), 3.00 (B), 2.00 (C), 1.00 (D), 0.00 (F)
 
 ### 🕒 Attendance Management
 - Date-wise attendance tracking
@@ -88,32 +87,42 @@ The project follows a modular and organized folder structure to ensure scalabili
 
 student-management-system/
 ├── assets/
-│ ├── css/
-│ │ └── style.css
-│ ├── js/
-│ │ └── script.js
-│ └── images/
-│ └── logo.png
+│   ├── css/
+│   │   └── style.css
+│   ├── js/
+│   │   └── script.js
+│   └── images/
 │
 ├── admin/
-│ ├── dashboard.php # Admin dashboard
-│ ├── students.php # Student management (CRUD)
-│ ├── courses.php # Course management
-│ ├── results.php # Result management
-│ └── attendance.php # Attendance management
+│   ├── dashboard.php         # Admin dashboard
+│   ├── students.php          # Student management (CRUD)
+│   ├── courses.php           # Course management
+│   ├── results.php           # Result management
+│   ├── attendance.php        # Attendance management
+│   ├── payments.php          # Payment management
+│   ├── get_students_by_course.php  # AJAX helper for attendance
+│   └── generate_payment_report.php # AJAX helper for payment reports
+│
+├── student/
+│   ├── dashboard.php         # Student dashboard
+│   ├── header.php            # Student-specific header
+│   └── footer.php            # Student-specific footer
 │
 ├── includes/
-│ ├── config.php # Database connection
-│ ├── auth.php # Authentication & session check
-│ ├── header.php # Common header
-│ └── footer.php # Common footer
+│   ├── config.php            # Database connection
+│   ├── auth.php              # Authentication & session check
+│   ├── header.php            # Admin/common header
+│   └── footer.php            # Admin/common footer
 │
-├── login.php # Admin login page
-├── logout.php # Logout handler
-├── index.php # Landing page
+├── login.php                 # Login page with role selection
+├── register.php              # Registration page
+├── logout.php                # Logout handler
+├── index.php                 # Landing page redirect
 │
-├── database.sql # Database schema
-└── README.md # Project documentation
+├── database.sql              # Database schema
+├── update_roles.sql          # Database updates for role-based system
+├── registration_setup.sql    # Database optimization for registration
+└── README.md                 # Project documentation
 
 
 ---

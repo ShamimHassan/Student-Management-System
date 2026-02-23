@@ -3,14 +3,15 @@ $page_title = "Results Management";
 require_once '../includes/header.php';
 requireLogin();
 
-// Function to calculate grade based on percentage
+// Function to calculate grade based on percentage (5.0 scale)
 function calculateGrade($percentage) {
-    if ($percentage >= 90) return 'A+';
-    if ($percentage >= 80) return 'A';
-    if ($percentage >= 70) return 'B';
-    if ($percentage >= 60) return 'C';
-    if ($percentage >= 50) return 'D';
-    return 'F';
+    if ($percentage >= 80) return '5.00 (A+)';
+    if ($percentage >= 70) return '4.00 (A)';
+    if ($percentage >= 60) return '3.50 (A-)';
+    if ($percentage >= 50) return '3.00 (B)';
+    if ($percentage >= 40) return '2.00 (C)';
+    if ($percentage >= 33) return '1.00 (D)';
+    return '0.00 (F)';
 }
 
 // Handle form submissions
@@ -237,10 +238,11 @@ $results = $stmt->get_result();
                             $percentage = ($result['marks_obtained'] / $result['total_marks']) * 100;
                             $grade_class = '';
                             switch($result['grade']) {
-                                case 'A+': case 'A': $grade_class = 'success'; break;
-                                case 'B': case 'C': $grade_class = 'primary'; break;
-                                case 'D': $grade_class = 'warning'; break;
-                                case 'F': $grade_class = 'danger'; break;
+                                case '5.00 (A+)': case '4.00 (A)': $grade_class = 'success'; break;
+                                case '3.50 (A-)': case '3.00 (B)': $grade_class = 'primary'; break;
+                                case '2.00 (C)': $grade_class = 'warning'; break;
+                                case '1.00 (D)': $grade_class = 'info'; break;
+                                case '0.00 (F)': $grade_class = 'danger'; break;
                             }
                         ?>
                         <tr>

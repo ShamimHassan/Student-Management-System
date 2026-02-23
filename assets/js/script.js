@@ -59,6 +59,18 @@ $(document).ready(function() {
         var total = parseFloat($('#total_marks').val()) || 1;
         var percentage = (obtained / total) * 100;
         $('#percentage').val(percentage.toFixed(2) + '%');
+        
+        // Calculate grade based on 5.0 scale
+        var grade = '';
+        if (percentage >= 80) grade = '5.00 (A+)';
+        else if (percentage >= 70) grade = '4.00 (A)';
+        else if (percentage >= 60) grade = '3.50 (A-)';
+        else if (percentage >= 50) grade = '3.00 (B)';
+        else if (percentage >= 40) grade = '2.00 (C)';
+        else if (percentage >= 33) grade = '1.00 (D)';
+        else grade = '0.00 (F)';
+        
+        $('#grade').val(grade);
     });
     
     // Edit Result Modal

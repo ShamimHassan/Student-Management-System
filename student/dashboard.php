@@ -173,10 +173,11 @@ $pending_payments = $conn->query("SELECT p.*, c.course_name, c.course_code, c.fe
                                 $percentage = ($result['marks_obtained'] / $result['total_marks']) * 100;
                                 $grade_class = '';
                                 switch($result['grade']) {
-                                    case 'A+': case 'A': $grade_class = 'success'; break;
-                                    case 'B': case 'C': $grade_class = 'primary'; break;
-                                    case 'D': $grade_class = 'warning'; break;
-                                    case 'F': $grade_class = 'danger'; break;
+                                    case '5.00 (A+)': case '4.00 (A)': $grade_class = 'success'; break;
+                                    case '3.50 (A-)': case '3.00 (B)': $grade_class = 'primary'; break;
+                                    case '2.00 (C)': $grade_class = 'warning'; break;
+                                    case '1.00 (D)': $grade_class = 'info'; break;
+                                    case '0.00 (F)': $grade_class = 'danger'; break;
                                 }
                                 $count++;
                             ?>

@@ -99,7 +99,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                     <div class="login-header">
                         <i class="fas fa-graduation-cap fa-3x mb-3"></i>
                         <h2>Student Management System</h2>
-                        <p class="mb-0">Login to your account</p>
+                        <p class="mb-0" id="roleDescription">Login to your account</p>
                     </div>
                     
                     <div class="login-body">
@@ -115,6 +115,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                                 <div class="role-option active" onclick="selectRole('admin')">
                                     <i class="fas fa-user-shield"></i>
                                     <div>Admin</div>
+                                </div>
+                                <div class="role-option" onclick="selectRole('teacher')">
+                                    <i class="fas fa-chalkboard-teacher"></i>
+                                    <div>Teacher</div>
+                                </div>
+                                <div class="role-option" onclick="selectRole('parent')">
+                                    <i class="fas fa-user-friends"></i>
+                                    <div>Parent</div>
                                 </div>
                                 <div class="role-option" onclick="selectRole('student')">
                                     <i class="fas fa-user-graduate"></i>
@@ -153,15 +161,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </div>
                         </form>
                         
-                        <div class="text-center mt-4">
-                            <small class="text-muted">
-                                <i class="fas fa-info-circle me-1"></i>
-                                Default credentials:<br>
-                                Admin: admin / password<br>
-                                Student: student / password
-                            </small>
-                        </div>
-
                         <div class="text-center mt-3">
                             <p class="mb-0">Don't have an account? <a href="register.php">Register here</a></p>
                         </div>
@@ -187,12 +186,33 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
             
             event.currentTarget.classList.add('active');
             
+            // Update role description
+            const roleDescription = document.getElementById('roleDescription');
+            const roleTexts = {
+                'admin': 'Administrator Login',
+                'teacher': 'Teacher Login',
+                'parent': 'Parent Login',
+                'student': 'Student Login'
+            };
+            roleDescription.textContent = roleTexts[role] || 'Login to your account';
+            
             // Update form styling based on role
             const card = document.querySelector('.login-card');
-            if (role === 'admin') {
-                card.style.borderColor = '#667eea';
-            } else {
-                card.style.borderColor = '#28a745';
+            const header = document.querySelector('.login-header');
+            
+            switch(role) {
+                case 'admin':
+                    header.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+                    break;
+                case 'teacher':
+                    header.style.background = 'linear-gradient(135deg, #4e73df 0%, #224abe 100%)';
+                    break;
+                case 'parent':
+                    header.style.background = 'linear-gradient(135deg, #36b9cc 0%, #1a8caa 100%)';
+                    break;
+                case 'student':
+                    header.style.background = 'linear-gradient(135deg, #1cc88a 0%, #13855c 100%)';
+                    break;
             }
         }
     </script>

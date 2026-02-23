@@ -31,12 +31,22 @@ function requireLogin() {
 
 // Redirect based on role
 function redirectBasedOnRole() {
-    if (isAdmin()) {
-        header("Location: " . BASE_URL . "admin/dashboard.php");
-    } else if (isStudent()) {
-        header("Location: " . BASE_URL . "student/dashboard.php");
-    } else {
-        header("Location: " . BASE_URL . "login.php");
+    $role = getUserRole();
+    switch($role) {
+        case 'admin':
+            header("Location: " . BASE_URL . "admin/dashboard.php");
+            break;
+        case 'teacher':
+            header("Location: " . BASE_URL . "teacher/dashboard.php");
+            break;
+        case 'parent':
+            header("Location: " . BASE_URL . "parent/dashboard.php");
+            break;
+        case 'student':
+            header("Location: " . BASE_URL . "student/dashboard.php");
+            break;
+        default:
+            header("Location: " . BASE_URL . "login.php");
     }
     exit();
 }
