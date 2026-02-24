@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 24, 2026 at 08:39 AM
+-- Generation Time: Feb 24, 2026 at 09:50 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -2846,17 +2846,17 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `username`, `password`, `role`, `first_name`, `last_name`, `email`, `phone`, `student_id`, `subject_id`, `assigned_classes`, `profile_image`, `last_login`, `is_active`, `created_at`, `updated_at`) VALUES
-(5, 'shamim', '$2y$10$62fZ8FuvZJ66RP8SnJvwhe6LNAWLTKcUScVmlVzQ9j/kVHt2gXhvW', 'admin', 'Shamim', 'Hassan', 'swshamim722@gmail.com', NULL, NULL, NULL, NULL, NULL, '2026-02-24 04:25:25', 1, '2026-02-23 11:33:43', '2026-02-24 04:25:25'),
+(5, 'shamim', '$2y$10$62fZ8FuvZJ66RP8SnJvwhe6LNAWLTKcUScVmlVzQ9j/kVHt2gXhvW', 'admin', 'Shamim', 'Hassan', 'swshamim722@gmail.com', NULL, NULL, NULL, NULL, NULL, '2026-02-24 08:44:09', 1, '2026-02-23 11:33:43', '2026-02-24 08:44:09'),
 (8, 'shamim001', '$2y$10$O1zNXUPNRDB3C77TPX5RIuXPgehwgjxlFpHw1VEaKI4Cl.qjHM1rC', 'teacher', 'Shamim', 'Hassan', 'swshamim72@gmail.com', '', NULL, NULL, '', NULL, '2026-02-23 16:20:50', 1, '2026-02-23 12:06:23', '2026-02-23 16:20:50'),
-(9, 'karim', '$2y$10$8KLBGnSj0Z2bEBDCP7mtmu/I5JtRv/XVvExIEbdTbk5ritGuvP/KC', 'student', 'Karim', 'Islam', 'karim722@gmail.com', '01571717688', 3, NULL, NULL, NULL, '2026-02-24 06:18:00', 1, '2026-02-23 12:56:13', '2026-02-24 06:18:00'),
+(9, 'karim', '$2y$10$8KLBGnSj0Z2bEBDCP7mtmu/I5JtRv/XVvExIEbdTbk5ritGuvP/KC', 'student', 'Karim', 'Islam', 'karim722@gmail.com', '01571717688', 3, NULL, NULL, NULL, '2026-02-24 08:48:59', 1, '2026-02-23 12:56:13', '2026-02-24 08:48:59'),
 (10, 'akash', '$2y$10$wk2k1mMuQOpAE.h12akORu8584nAZU7q7083.147d7MI0DuGGosLa', 'parent', 'Akash', 'Ahmed', 'akash722@gmail.com', '01571717682', 3, NULL, NULL, NULL, '2026-02-23 16:19:12', 1, '2026-02-23 12:58:55', '2026-02-23 16:19:12'),
 (16, 'teacher_bangla', '$2y$10$upDe0LI0vssUOPTTFN.nEeL1CTd1bvJB6L4toNp5GTvFnKV06xrjm', 'teacher', 'Bangla', 'Teacher', 'teacher_bangla@example.com', '01712272486', NULL, 6, 'Class 9A, Class 10B', NULL, NULL, 1, '2026-02-23 18:02:09', '2026-02-23 18:02:09'),
 (17, 'teacher_english', '$2y$10$45rdqUTCnV4ZkkOXuIUzE.9KCinexRFtYfcID.4YQXLdgDGvJSmcy', 'teacher', 'English', 'Teacher', 'teacher_english@example.com', '01712089937', NULL, 7, 'Class 9A, Class 10B', NULL, NULL, 1, '2026-02-23 18:02:09', '2026-02-23 18:02:09'),
 (18, 'teacher_math', '$2y$10$/FB/Btl8Y5C6SnRLarjSDu.ovTPL.y8ebGA9AiVdCv9Cp3NO/VF7i', 'teacher', 'Math', 'Teacher', 'teacher_math@example.com', '01718355267', NULL, 8, 'Class 9A, Class 10B', NULL, NULL, 1, '2026-02-23 18:02:09', '2026-02-23 18:02:09'),
 (19, 'teacher_science', '$2y$10$AOhzNk.L9ucq55ZHI6cmMeLsCN1C1qGAOKyzRr1KUtKRPne7gE7IG', 'teacher', 'Science', 'Teacher', 'teacher_science@example.com', '01714380441', NULL, 9, 'Class 9A, Class 10B', NULL, NULL, 1, '2026-02-23 18:02:09', '2026-02-23 18:02:09'),
-(20, 'sumon1', 'f51909c3a73055d344abf17e7a271482', 'teacher', 'ICT', 'Teacher', 'teacher_ict@example.com', '01718854029', NULL, 10, 'Class 9A, Class 10B', NULL, '2026-02-24 05:45:18', 1, '2026-02-23 18:02:09', '2026-02-24 06:11:53'),
-(21, 'rashed', '$2y$10$NbSZfZnhC6YhObMpKo.B2O9W2UdXd5vVAZjFvRlpKXsf7pGfm2gnS', 'student', 'Rashed', 'Hassan', 'sws@gmail.com', '01717545847', 404, NULL, NULL, NULL, '2026-02-23 23:54:20', 1, '2026-02-23 23:46:17', '2026-02-23 23:54:20'),
-(22, 'nazmul', '$2y$10$MFW6XKrDkeTO2l40Pm0SmecvSCe3LbV.zBCwmd/8AkR42nCAaK1Om', 'parent', 'Nazmul', 'Huda', 'nazmul@gmail.com', '01571717682', 404, NULL, NULL, NULL, NULL, 1, '2026-02-23 23:48:29', '2026-02-23 23:48:29'),
+(20, 'sumon', '$2y$10$RawkHnPMKPfMl8KU6eMZvuMu0FEHeT/MkVKoz7fFISMLviv5TVZP6', 'teacher', 'ICT', 'Teacher', 'teacher_ict@example.com', '01718854029', NULL, 10, 'Class 9A, Class 10B', NULL, '2026-02-24 08:45:05', 1, '2026-02-23 18:02:09', '2026-02-24 08:45:05'),
+(21, 'rashed', '$2y$10$NbSZfZnhC6YhObMpKo.B2O9W2UdXd5vVAZjFvRlpKXsf7pGfm2gnS', 'student', 'Rashed', 'Hassan', 'sws@gmail.com', '01717545847', 404, NULL, NULL, NULL, '2026-02-24 08:46:31', 1, '2026-02-23 23:46:17', '2026-02-24 08:46:31'),
+(22, 'nazmul', '$2y$10$MFW6XKrDkeTO2l40Pm0SmecvSCe3LbV.zBCwmd/8AkR42nCAaK1Om', 'parent', 'Nazmul', 'Huda', 'nazmul@gmail.com', '01571717682', 404, NULL, NULL, NULL, '2026-02-24 08:49:14', 1, '2026-02-23 23:48:29', '2026-02-24 08:49:14'),
 (23, 'Abir', '$2y$10$DK9Zb1GCvD9WIG2lDp4SgeCVrq79xAH01XOpmLIUWNgIK2vGKEj7O', 'teacher', 'Abir', 'Islam', 'abir@gmail.com', '01774500816', NULL, 14, 'Class 10B', NULL, '2026-02-24 06:13:24', 1, '2026-02-23 23:50:44', '2026-02-24 06:13:24');
 
 --
