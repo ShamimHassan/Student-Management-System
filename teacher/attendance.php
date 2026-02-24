@@ -15,8 +15,8 @@ requireLogin();
 $teacher_id = $_SESSION['user_id'];
 $courses_query = "SELECT c.id, c.course_code, c.course_name 
                   FROM courses c 
-                  JOIN admins a ON c.id = a.subject_id 
-                  WHERE a.id = ?";
+                  JOIN users u ON c.id = u.subject_id 
+                  WHERE u.id = ? AND u.role = 'teacher'";
 $stmt = $conn->prepare($courses_query);
 $stmt->bind_param("i", $teacher_id);
 $stmt->execute();
@@ -27,8 +27,8 @@ $students_query = "SELECT DISTINCT s.id, s.student_id, s.first_name, s.last_name
                    FROM students s 
                    JOIN student_courses sc ON s.id = sc.student_id
                    JOIN courses c ON sc.course_id = c.id
-                   JOIN users a ON c.id = a.subject_id
-                   WHERE a.id = ?";
+                   JOIN users u ON c.id = u.subject_id
+                   WHERE u.id = ? AND u.role = 'teacher'";
 $students_stmt = $conn->prepare($students_query);
 $students_stmt->bind_param("i", $teacher_id);
 $students_stmt->execute();

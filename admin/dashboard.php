@@ -136,39 +136,39 @@ $recent_results = $conn->query("SELECT r.*, s.first_name, s.last_name, c.course_
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_students.php">
-                                <i class="fas fa-graduation-cap"></i> Manage Students
-                            </a>
+                                <a class="nav-link" href="students.php">
+                                    <i class="fas fa-graduation-cap"></i> Manage Students
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_teachers.php">
-                                <i class="fas fa-chalkboard-teacher"></i> Manage Teachers
-                            </a>
+                                <a class="nav-link" href="manage_teachers.php">
+                                    <i class="fas fa-chalkboard-teacher"></i> Manage Teachers
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_parents.php">
-                                <i class="fas fa-user-friends"></i> Manage Parents
-                            </a>
+                                <a class="nav-link" href="parents.php">
+                                    <i class="fas fa-user-friends"></i> Manage Parents
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_courses.php">
-                                <i class="fas fa-book"></i> Manage Courses
-                            </a>
+                                <a class="nav-link" href="courses.php">
+                                    <i class="fas fa-book"></i> Manage Courses
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_attendance.php">
-                                <i class="fas fa-calendar-check"></i> Attendance
-                            </a>
+                                <a class="nav-link" href="attendance.php">
+                                    <i class="fas fa-calendar-check"></i> Attendance
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_results.php">
-                                <i class="fas fa-chart-bar"></i> Results
-                            </a>
+                                <a class="nav-link" href="results.php">
+                                    <i class="fas fa-chart-bar"></i> Results
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_fees.php">
-                                <i class="fas fa-money-bill-wave"></i> Fee Management
-                            </a>
+                                <a class="nav-link" href="payments.php">
+                                    <i class="fas fa-money-bill-wave"></i> Fee Management
+                                </a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" href="virtual_exam.php">
@@ -314,7 +314,7 @@ $recent_results = $conn->query("SELECT r.*, s.first_name, s.last_name, c.course_
                             <div class="card-body">
                                 <div class="row">
                                     <div class="col-md-3 mb-3">
-                                        <a href="manage_students.php" class="btn btn-primary btn-lg w-100">
+                                        <a href="students.php" class="btn btn-primary btn-lg w-100">
                                             <i class="fas fa-graduation-cap me-2"></i>Manage Students
                                         </a>
                                     </div>
@@ -324,12 +324,12 @@ $recent_results = $conn->query("SELECT r.*, s.first_name, s.last_name, c.course_
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="manage_attendance.php" class="btn btn-info btn-lg w-100">
+                                        <a href="attendance.php" class="btn btn-info btn-lg w-100">
                                             <i class="fas fa-calendar-check me-2"></i>Attendance
                                         </a>
                                     </div>
                                     <div class="col-md-3 mb-3">
-                                        <a href="manage_fees.php" class="btn btn-warning btn-lg w-100">
+                                        <a href="payments.php" class="btn btn-warning btn-lg w-100">
                                             <i class="fas fa-money-bill-wave me-2"></i>Fee Management
                                         </a>
                                     </div>
@@ -549,12 +549,51 @@ $recent_results = $conn->query("SELECT r.*, s.first_name, s.last_name, c.course_
         </div>
     </div>
 
+    <!-- All Courses Section -->
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-book me-2"></i>All Courses</h5>
+            </div>
+            <div class="card-body">
+                <?php 
+                $all_courses = $conn->query("SELECT * FROM courses ORDER BY created_at DESC");
+                if ($all_courses->num_rows > 0): ?>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Fee (tk)</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while($course = $all_courses->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($course['course_code']); ?></td>
+                                <td><?php echo htmlspecialchars($course['course_name']); ?></td>
+                                <td><?php echo htmlspecialchars($course['description']); ?></td>
+                                <td><?php echo number_format($course['fee'], 2); ?></td>
+                                <td><?php echo date('M d, Y', strtotime($course['created_at'])); ?></td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php else: ?>
+                    <div class="alert alert-info">No courses found.</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    
     <!-- Custom JS -->
     <script src="../assets/js/script.js"></script>
 </body>

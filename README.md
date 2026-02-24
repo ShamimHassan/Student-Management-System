@@ -1,10 +1,9 @@
 # 🎓 Student Management System
 
-A web-based **Student Management System (SMS)** built using **HTML, CSS, Bootstrap, JavaScript, jQuery, PHP, and MySQL**.  
+A web-based **Student Management System (SMS)** built using **HTML, CSS, Bootstrap, JavaScript, jQuery, AJAX, PHP, and MySQL**.  
 This application helps educational institutions manage student records, courses, results, and attendance efficiently.
 
 ---
-
 ## 📌 Features
 
 ### 🔐 Authentication
@@ -15,7 +14,7 @@ This application helps educational institutions manage student records, courses,
 - Add, edit, delete students
 - Unique student ID
 - Active / inactive status
-- Search & filter (jQuery)
+- Search & filter (jQuery, AJAX)
 
 ### 📘 Course Management
 - Add and manage courses
@@ -38,13 +37,7 @@ This application helps educational institutions manage student records, courses,
 - Payment tracking and reporting
 
 ### 📱 Responsive Design
-- Fully responsive UI using Bootstrap
-
----
-
-## 🧱 System Architecture
-
-
+- Fully responsive UI using Tailwind
 ---
 
 ## 🛠️ Tech Stack
@@ -53,9 +46,10 @@ This application helps educational institutions manage student records, courses,
 - HTML5
 - CSS3
 - Bootstrap
+- Tailwind
 - JavaScript
-- jQuery
-
+- jQuery AJAX
+- AJAX
 ### Backend
 - PHP
 
@@ -67,7 +61,7 @@ This application helps educational institutions manage student records, courses,
 ## 🗄️ Database Schema
 
 ### Tables
-- `admins` – Admin authentication
+- `users` – Users authentication
 - `students` – Student information
 - `courses` – Course details
 - `student_courses` – Student-course mapping
@@ -170,17 +164,6 @@ student-management-system/
    - Open your browser and navigate to: `http://localhost/Student-Management-System`
    - You should be redirected to the login page
 
-### Default Login Credentials
-**Admin Account:**
-- Username: `admin`
-- Password: `password`
-- Role: Admin (Full system access)
-
-**Student Account:**
-- Username: `student`
-- Password: `password`
-- Role: Student (View-only access to personal data)
-
 ### Registration Feature
 New users can create accounts directly through the registration page:
 - **Admin Registration**: Create admin accounts with full system access
@@ -196,7 +179,7 @@ New users can create accounts directly through the registration page:
    - **All users**: Username, Password, Confirm Password
    - **Students only**: First Name, Last Name, Email, Phone, Student ID
 4. Submit form to create account
-5. Login with new credentials
+5. Login with password
 
 ### Security Features
 - Password hashing using PHP's password_hash()
@@ -206,9 +189,8 @@ New users can create accounts directly through the registration page:
 - Form validation with real-time feedback
 
 ### Post-Installation Steps
-1. Change the default admin password after first login
-2. Add students, courses, and other data as needed
-3. Configure any additional settings in `includes/config.php`
+1. Add students, courses, and other data as needed
+2. Configure any additional settings in `includes/config.php`
 
 ## 🎯 Usage Guide
 

@@ -119,44 +119,44 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                             </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_students.php">
-                                <i class="fas fa-graduation-cap"></i> Manage Students
-                            </a>
+                                <a class="nav-link" href="students.php">
+                                    <i class="fas fa-graduation-cap"></i> Manage Students
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link active" href="manage_teachers.php">
-                                <i class="fas fa-chalkboard-teacher"></i> Manage Teachers
-                            </a>
+                                <a class="nav-link active" href="manage_teachers.php">
+                                    <i class="fas fa-chalkboard-teacher"></i> Manage Teachers
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_parents.php">
-                                <i class="fas fa-user-friends"></i> Manage Parents
-                            </a>
+                                <a class="nav-link" href="parents.php">
+                                    <i class="fas fa-user-friends"></i> Manage Parents
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_courses.php">
-                                <i class="fas fa-book"></i> Manage Courses
-                            </a>
+                                <a class="nav-link" href="courses.php">
+                                    <i class="fas fa-book"></i> Manage Courses
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_attendance.php">
-                                <i class="fas fa-calendar-check"></i> Attendance
-                            </a>
+                                <a class="nav-link" href="attendance.php">
+                                    <i class="fas fa-calendar-check"></i> Attendance
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_results.php">
-                                <i class="fas fa-chart-bar"></i> Results
-                            </a>
+                                <a class="nav-link" href="results.php">
+                                    <i class="fas fa-chart-bar"></i> Results
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="manage_fees.php">
-                                <i class="fas fa-money-bill-wave"></i> Fee Management
-                            </a>
+                                <a class="nav-link" href="payments.php">
+                                    <i class="fas fa-money-bill-wave"></i> Fee Management
+                                </a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" href="virtual_exam.php">
-                                <i class="fas fa-file-alt"></i> Virtual Exam
-                            </a>
+                                <a class="nav-link" href="virtual_exam.php">
+                                    <i class="fas fa-file-alt"></i> Virtual Exam
+                                </a>
                         </li>
                     </ul>
                     

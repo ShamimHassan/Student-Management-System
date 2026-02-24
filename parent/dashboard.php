@@ -624,12 +624,51 @@ if ($parent) {
         </div>
     </div>
 
+    <!-- All Courses Section -->
+    <div class="container mt-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="fas fa-book me-2"></i>All Courses</h5>
+            </div>
+            <div class="card-body">
+                <?php 
+                $all_courses = $conn->query("SELECT * FROM courses ORDER BY created_at DESC");
+                if ($all_courses->num_rows > 0): ?>
+                <div class="table-responsive">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>Course Code</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                                <th>Fee (tk)</th>
+                                <th>Created</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php while($course = $all_courses->fetch_assoc()): ?>
+                            <tr>
+                                <td><?php echo htmlspecialchars($course['course_code']); ?></td>
+                                <td><?php echo htmlspecialchars($course['course_name']); ?></td>
+                                <td><?php echo htmlspecialchars($course['description']); ?></td>
+                                <td><?php echo number_format($course['fee'], 2); ?></td>
+                                <td><?php echo date('M d, Y', strtotime($course['created_at'])); ?></td>
+                            </tr>
+                            <?php endwhile; ?>
+                        </tbody>
+                    </table>
+                </div>
+                <?php else: ?>
+                    <div class="alert alert-info">No courses found.</div>
+                <?php endif; ?>
+            </div>
+        </div>
+    </div>
+
     <!-- Bootstrap 5 JS Bundle -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
-    
     <!-- Custom JS -->
     <script src="../assets/js/script.js"></script>
 </body>

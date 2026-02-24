@@ -9,6 +9,7 @@ $message_type = '';
 
 if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     if (isset($_POST['action'])) {
+        $is_ajax = isset($_POST['ajax']) && $_POST['ajax'] == '1';
         switch ($_POST['action']) {
             case 'add':
                 $student_id = trim($_POST['student_id']);
@@ -19,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $address = trim($_POST['address']);
                 $dob = $_POST['date_of_birth'];
                 $status = $_POST['status'];
-                
                 // Check if student ID or email already exists
                 $check = $conn->prepare("SELECT id FROM students WHERE student_id = ? OR email = ?");
                 $check->bind_param("ss", $student_id, $email);
@@ -27,20 +27,47 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($check->get_result()->num_rows > 0) {
                     $message = "Student ID or Email already exists!";
                     $message_type = "danger";
+                    if ($is_ajax) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'message' => $message]);
+                        exit();
+                    }
                 } else {
                     $stmt = $conn->prepare("INSERT INTO students (student_id, first_name, last_name, email, phone, address, date_of_birth, status) VALUES (?, ?, ?, ?, ?, ?, ?, ?)");
                     $stmt->bind_param("ssssssss", $student_id, $first_name, $last_name, $email, $phone, $address, $dob, $status);
-                    
                     if ($stmt->execute()) {
                         $message = "Student added successfully!";
                         $message_type = "success";
+                        if ($is_ajax) {
+                            $id = $stmt->insert_id;
+                            $created_at = date('Y-m-d H:i:s');
+                            $student = [
+                                'id' => $id,
+                                'student_id' => $student_id,
+                                'first_name' => $first_name,
+                                'last_name' => $last_name,
+                                'email' => $email,
+                                'phone' => $phone,
+                                'address' => $address,
+                                'date_of_birth' => $dob,
+                                'status' => $status,
+                                'created_at' => $created_at
+                            ];
+                            header('Content-Type: application/json');
+                            echo json_encode(['success' => true, 'message' => $message, 'student' => $student]);
+                            exit();
+                        }
                     } else {
                         $message = "Error adding student!";
                         $message_type = "danger";
+                        if ($is_ajax) {
+                            header('Content-Type: application/json');
+                            echo json_encode(['success' => false, 'message' => $message]);
+                            exit();
+                        }
                     }
                 }
                 break;
-                
             case 'edit':
                 $id = $_POST['id'];
                 $first_name = trim($_POST['first_name']);
@@ -50,7 +77,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 $address = trim($_POST['address']);
                 $dob = $_POST['date_of_birth'];
                 $status = $_POST['status'];
-                
                 // Check if email already exists for other students
                 $check = $conn->prepare("SELECT id FROM students WHERE email = ? AND id != ?");
                 $check->bind_param("si", $email, $id);
@@ -58,31 +84,63 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
                 if ($check->get_result()->num_rows > 0) {
                     $message = "Email already exists!";
                     $message_type = "danger";
+                    if ($is_ajax) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'message' => $message]);
+                        exit();
+                    }
                 } else {
                     $stmt = $conn->prepare("UPDATE students SET first_name = ?, last_name = ?, email = ?, phone = ?, address = ?, date_of_birth = ?, status = ? WHERE id = ?");
                     $stmt->bind_param("sssssssi", $first_name, $last_name, $email, $phone, $address, $dob, $status, $id);
-                    
                     if ($stmt->execute()) {
                         $message = "Student updated successfully!";
                         $message_type = "success";
+                        if ($is_ajax) {
+                            $student = [
+                                'id' => $id,
+                                'first_name' => $first_name,
+                                'last_name' => $last_name,
+                                'email' => $email,
+                                'phone' => $phone,
+                                'address' => $address,
+                                'date_of_birth' => $dob,
+                                'status' => $status
+                            ];
+                            header('Content-Type: application/json');
+                            echo json_encode(['success' => true, 'message' => $message, 'student' => $student]);
+                            exit();
+                        }
                     } else {
                         $message = "Error updating student!";
                         $message_type = "danger";
+                        if ($is_ajax) {
+                            header('Content-Type: application/json');
+                            echo json_encode(['success' => false, 'message' => $message]);
+                            exit();
+                        }
                     }
                 }
                 break;
-                
             case 'delete':
                 $id = $_POST['id'];
                 $stmt = $conn->prepare("DELETE FROM students WHERE id = ?");
                 $stmt->bind_param("i", $id);
-                
                 if ($stmt->execute()) {
                     $message = "Student deleted successfully!";
                     $message_type = "success";
+                    if ($is_ajax) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => true, 'message' => $message]);
+                        exit();
+                    }
                 } else {
                     $message = "Error deleting student!";
                     $message_type = "danger";
+                    if ($is_ajax) {
+                        header('Content-Type: application/json');
+                        echo json_encode(['success' => false, 'message' => $message]);
+                        exit();
+                    }
                 }
                 break;
         }

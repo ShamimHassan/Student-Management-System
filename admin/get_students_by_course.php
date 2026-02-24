@@ -1,8 +1,9 @@
 <?php
 require_once '../includes/config.php';
+require_once '../includes/auth.php';
 requireLogin();
 
-$course_id = $_POST['course_id'] ?? 0;
+$course_id = isset($_POST['course_id']) ? intval($_POST['course_id']) : 0;
 
 if ($course_id) {
     $sql = "SELECT s.id, s.student_id, s.first_name, s.last_name 

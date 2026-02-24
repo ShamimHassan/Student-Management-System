@@ -4,7 +4,7 @@ $(document).ready(function() {
     // =============================
     
     // Edit Student Modal
-    $('.edit-btn').on('click', function() {
+    $('#studentsTable').on('click', '.edit-btn', function() {
         var student = $(this).data('student');
         $('#edit_id').val(student.id);
         $('#edit_first_name').val(student.first_name);
@@ -16,14 +16,157 @@ $(document).ready(function() {
         $('#edit_status').val(student.status);
         $('#editStudentModal').modal('show');
     });
-    
+
     // Delete Student Confirmation
-    $('.delete-btn').on('click', function() {
+    $('#studentsTable').on('click', '.delete-btn', function() {
         var id = $(this).data('id');
         var name = $(this).data('name');
         $('#delete_id').val(id);
         $('#delete_name').text(name);
         $('#deleteModal').modal('show');
+    });
+
+    // Add Student via AJAX
+    $('#addStudentModal form').on('submit', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $form.find('button[type="submit"]');
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
+        var data = $form.serialize() + '&ajax=1';
+        $.ajax({
+            url: 'students.php',
+            method: 'POST',
+            data: data,
+            success: function(response) {
+                var res;
+                try {
+                    res = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (err) {
+                    res = { success: false, message: 'Unexpected response' };
+                }
+                if (res.success && res.student) {
+                    $('#addStudentModal').modal('hide');
+                    $form[0].reset();
+                    var s = res.student;
+                    var rowHtml = '<tr>'
+                        + '<td>' + $('<div>').text(s.student_id).html() + '</td>'
+                        + '<td>' + $('<div>').text(s.first_name + ' ' + s.last_name).html() + '</td>'
+                        + '<td>' + $('<div>').text(s.email).html() + '</td>'
+                        + '<td>' + $('<div>').text(s.phone).html() + '</td>'
+                        + '<td>' + (s.date_of_birth ? $('<div>').text(s.date_of_birth).html() : 'N/A') + '</td>'
+                        + '<td><span class="badge bg-' + (s.status === 'active' ? 'success' : 'secondary') + '">' + (s.status.charAt(0).toUpperCase() + s.status.slice(1)) + '</span></td>'
+                        + '<td>' + (s.created_at ? $('<div>').text(s.created_at).html() : '') + '</td>'
+                        + '<td><div class="btn-group" role="group">'
+                        + '<button class="btn btn-sm btn-outline-primary edit-btn" data-student=\'' + JSON.stringify(s) + '\'><i class="fas fa-edit"></i></button>'
+                        + '<button class="btn btn-sm btn-outline-danger delete-btn" data-id="' + s.id + '" data-name="' + $('<div>').text(s.first_name + ' ' + s.last_name).html() + '"><i class="fas fa-trash"></i></button>'
+                        + '</div></td>'
+                        + '</tr>';
+                    $('#studentsTable tbody').prepend(rowHtml);
+                    showToast(res.message || 'Student added', 'success');
+                } else {
+                    showToast(res.message || 'Error adding student', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Error adding student', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Edit Student via AJAX
+    $('#editStudentModal form').on('submit', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $form.find('button[type="submit"]');
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
+        var data = $form.serialize() + '&ajax=1';
+        $.ajax({
+            url: 'students.php',
+            method: 'POST',
+            data: data,
+            success: function(response) {
+                var res;
+                try {
+                    res = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (err) {
+                    res = { success: false, message: 'Unexpected response' };
+                }
+                if (res.success && res.student) {
+                    $('#editStudentModal').modal('hide');
+                    var s = res.student;
+                    // Find and update the row
+                    var $row = $('#studentsTable tbody tr').filter(function() {
+                        return $(this).find('td:first').text() === s.student_id;
+                    });
+                    if ($row.length) {
+                        $row.find('td').eq(1).text(s.first_name + ' ' + s.last_name);
+                        $row.find('td').eq(2).text(s.email);
+                        $row.find('td').eq(3).text(s.phone);
+                        $row.find('td').eq(4).text(s.date_of_birth || 'N/A');
+                        $row.find('td').eq(5).html('<span class="badge bg-' + (s.status === 'active' ? 'success' : 'secondary') + '">' + (s.status.charAt(0).toUpperCase() + s.status.slice(1)) + '</span>');
+                        // Optionally update created_at if needed
+                        $row.find('td').eq(6).text($row.find('td').eq(6).text());
+                        // Update data-student attribute
+                        $row.find('.edit-btn').data('student', s);
+                        $row.find('.delete-btn').data('name', s.first_name + ' ' + s.last_name);
+                    }
+                    showToast(res.message || 'Student updated', 'success');
+                } else {
+                    showToast(res.message || 'Error updating student', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Error updating student', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+
+    // Delete Student via AJAX
+    $('#deleteModal form').on('submit', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $form.find('button[type="submit"]');
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Deleting...');
+        var data = $form.serialize() + '&ajax=1';
+        $.ajax({
+            url: 'students.php',
+            method: 'POST',
+            data: data,
+            success: function(response) {
+                var res;
+                try {
+                    res = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (err) {
+                    res = { success: false, message: 'Unexpected response' };
+                }
+                if (res.success) {
+                    $('#deleteModal').modal('hide');
+                    // Remove the row
+                    var id = $form.find('input[name="id"]').val();
+                    $('#studentsTable tbody tr').filter(function() {
+                        return $(this).find('.delete-btn').data('id') == id;
+                    }).remove();
+                    showToast(res.message || 'Student deleted', 'success');
+                } else {
+                    showToast(res.message || 'Error deleting student', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Error deleting student', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
     });
     
     // Course Management Functions
@@ -48,6 +191,120 @@ $(document).ready(function() {
         $('#delete_id').val(id);
         $('#delete_name').text(name);
         $('#deleteModal').modal('show');
+    });
+    
+    // Add Course via AJAX
+    $('#addCourseModal form').on('submit', function(e) {
+        e.preventDefault();
+        var $form = $(this);
+        var $btn = $form.find('button[type="submit"]');
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
+        var data = $form.serialize() + '&ajax=1';
+        $.ajax({
+            url: 'courses.php',
+            method: 'POST',
+            data: data,
+            success: function(response) {
+                var res;
+                try {
+                    res = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (err) {
+                    res = { success: false, message: 'Unexpected response' };
+                }
+                if (res.success && res.course) {
+                    $('#addCourseModal').modal('hide');
+                    $form[0].reset();
+                    var c = res.course;
+                    var desc = c.description || '';
+                    var shortDesc = desc.length > 50 ? desc.substring(0, 50) + '...' : desc;
+                    var rowHtml = '<tr>'
+                        + '<td><strong>' + $('<div>').text(c.course_code).html() + '</strong></td>'
+                        + '<td>' + $('<div>').text(c.course_name).html() + '</td>'
+                        + '<td>' + $('<div>').text(shortDesc).html() + '</td>'
+                        + '<td>' + c.credits + '</td>'
+                        + '<td>' + parseFloat(c.fee).toFixed(2) + '</td>'
+                        + '<td><span class="badge bg-info">0 students</span></td>'
+                        + '<td>' + c.created_at_formatted + '</td>'
+                        + '<td><div class="btn-group" role="group">'
+                        + '<button type="button" class="btn btn-sm btn-outline-primary edit-btn" data-course=\'' + JSON.stringify(c) + '\'><i class="fas fa-edit"></i> Edit</button>'
+                        + '<button type="button" class="btn btn-sm btn-outline-danger delete-btn" data-id="' + c.id + '" data-name="' + $('<div>').text(c.course_name).html() + '"><i class="fas fa-trash"></i> Delete</button>'
+                        + '</div></td>'
+                        + '</tr>';
+                    $('#coursesTable tbody').prepend(rowHtml);
+                    showToast(res.message || 'Course added', 'success');
+                } else {
+                    showToast(res.message || 'Error adding course', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Error adding course', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+    
+    // Seed Demo Data
+    $('#seedDataBtn').on('click', function() {
+        var $btn = $(this);
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Seeding...');
+        $.ajax({
+            url: 'seed_sample_data.php',
+            method: 'POST',
+            success: function(response) {
+                var res;
+                try {
+                    res = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (err) {
+                    res = { success: false, message: 'Unexpected response' };
+                }
+                if (res.success) {
+                    showToast('Seed completed: ' + (res.students_created || 0) + ' students, ' + (res.courses || 0) + ' courses', 'success');
+                    setTimeout(function() { window.location.reload(); }, 1200);
+                } else {
+                    showToast(res.message || 'Seed failed', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Seed failed', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
+    });
+    
+    $('#clearSeedBtn').on('click', function() {
+        var $btn = $(this);
+        var originalText = $btn.html();
+        $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Clearing...');
+        $.ajax({
+            url: 'seed_delete_data.php',
+            method: 'POST',
+            success: function(response) {
+                var res;
+                try {
+                    res = typeof response === 'object' ? response : JSON.parse(response);
+                } catch (err) {
+                    res = { success: false, message: 'Unexpected response' };
+                }
+                if (res.success) {
+                    showToast(res.message || 'Demo data cleared', 'success');
+                    setTimeout(function() { window.location.reload(); }, 1200);
+                } else {
+                    showToast(res.message || 'Clear failed', 'danger');
+                }
+            },
+            error: function() {
+                showToast('Clear failed', 'danger');
+            },
+            complete: function() {
+                $btn.prop('disabled', false).html(originalText);
+            }
+        });
     });
     
     // Result Management Functions
