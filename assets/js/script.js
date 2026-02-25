@@ -45,6 +45,7 @@ $(document).ready(function() {
                 } catch (err) {
                     res = { success: false, message: 'Unexpected response' };
                 }
+                console.log(res);
                 if (res.success && res.student) {
                     $('#addStudentModal').modal('hide');
                     $form[0].reset();
@@ -75,7 +76,13 @@ $(document).ready(function() {
                 $btn.prop('disabled', false).html(originalText);
             }
         });
-    });
+    }); 
+/*     $("#addStudentBtn").submit(function() {
+        e.preventDefault();
+        alert("Form submitted");
+        return false;
+    }); */
+
 
     // Edit Student via AJAX
     $('#editStudentModal form').on('submit', function(e) {
@@ -512,7 +519,7 @@ $(document).ready(function() {
     });
     
     // Loading state for buttons
-    $('button[type="submit"]').on('click', function() {
+/*     $('button[type="submit"]').on('click', function() {
         var $btn = $(this);
         var originalText = $btn.html();
         $btn.prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-2"></span>Processing...');
@@ -521,7 +528,7 @@ $(document).ready(function() {
         setTimeout(function() {
             $btn.prop('disabled', false).html(originalText);
         }, 3000);
-    });
+    }); */
     
     // Toast notifications
     function showToast(message, type = 'success') {

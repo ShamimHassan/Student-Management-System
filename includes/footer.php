@@ -7,6 +7,6 @@
     <script src="https://code.jquery.com/jquery-3.7.0.min.js"></script>
     
     <!-- Custom JS -->
-    <script src="<?php echo BASE_URL; ?>assets/js/script.js"></script>
+    <script src="<?php echo BASE_URL; ?>assets/js/script.js?v=1.0"></script>
 </body>
 </html>

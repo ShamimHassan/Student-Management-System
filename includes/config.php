@@ -17,5 +17,5 @@ if ($conn->connect_error) {
 $conn->set_charset("utf8");
 
 // Base URL for the application
-define('BASE_URL', 'http://localhost/Student-Management-System/');
+define('BASE_URL', 'http://localhost/round68/php/projects/Student-Management-System/');
 ?>
